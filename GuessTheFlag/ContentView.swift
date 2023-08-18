@@ -13,14 +13,43 @@ struct ContentView: View {
     @State private var correctAnswer = Int.random(in: 0...2) // A random integer represents the correct answer
     @State private var showingScore = false // alert toggle
     @State private var scoreTitle = " " // alert title
+    @State private var score = 0 // Variable to kepp track of the score
+    @State private var textMessage = "" // String for the alert message
+    @State private var questions = 8 // Varible for keeping track of the number of questions
+    @State private var alertButton = "" // String for alert botton
     
     func flagTapped(_ number: Int){ // asigning scoreTitle when a flag is tapped and toggle alert
         if(correctAnswer == number){
             scoreTitle = "Correct"
+            score += 1
         }else{
             scoreTitle = "Wrong"
         }
+        
+        if(scoreTitle == "Correct"){ // assigning string textMessage a value based on tapped flag
+            textMessage = "Your score is \(score)"
+        }else{
+            textMessage = "Thar's the flag of: \(countries[number])" // showing the tapped falg as message
+        }
+        /*Condition for limiting the game to 8 questions*/
+        if(questions <= 1){
+            alertButton = "New Game" // assigning value to alert button
+            
+            newGame()
+            
+        } else {
+            alertButton = "Next Question"
+            questions -= 1
+        }
+        
         showingScore = true
+    }
+    
+    func newGame(){ // Method for new game
+        questions = 8
+        score = 0
+        countries.shuffle()
+        correctAnswer = Int.random(in: 0...2)
     }
     
     func askQuestion(){ // method created for alert action
@@ -59,9 +88,9 @@ struct ContentView: View {
                                 .shadow(radius: 5)
                         }
                         .alert(scoreTitle, isPresented: $showingScore){ // alert focus activates when flag is tapped
-                            Button("OK", action: askQuestion)
+                            Button("\(alertButton)", action: askQuestion)
                         }message: {
-                            Text("Your score is ??")
+                            Text(textMessage) // calling value from flagTapped method
                         }
                     }
                 }
@@ -71,8 +100,8 @@ struct ContentView: View {
                 .background(.regularMaterial)
                 .clipShape(RoundedRectangle(cornerRadius: 20))
                 Spacer()
+                Text("Score: \(score)")
                 Spacer()
-                Text("Score ???")
                 Spacer()
                     .font(.title.bold())
                     .foregroundColor(.white)
