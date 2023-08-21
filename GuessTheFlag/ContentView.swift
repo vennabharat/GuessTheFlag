@@ -7,6 +7,15 @@
 
 import SwiftUI
 
+// creating Vcustom View modifier
+struct flagLabel: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .clipShape(Capsule())
+            .shadow(radius: 5)
+    }
+}
+
 struct ContentView: View {
     
     @State private var countries = ["Estonia", "France", "Germany", "Ireland", "Italy", "Monaco", "Nigeria", "Poland", "Russia", "Spain", "UK", "US"].shuffled() // Array of Strings representing countries
@@ -83,9 +92,10 @@ struct ContentView: View {
                             flagTapped(number) // calling flagTapped with index value to compare it to the correctAnswer
                         }label: {
                             Image(countries[number]) // Image as the label for the buttons
-                                .renderingMode(.original)
-                                .clipShape(Capsule())
-                                .shadow(radius: 5)
+//                                .renderingMode(.original)
+//                                .clipShape(Capsule())
+//                                .shadow(radius: 5)
+                                .modifier(flagLabel())// created custom modifier for view
                         }
                         .alert(scoreTitle, isPresented: $showingScore){ // alert focus activates when flag is tapped
                             Button("\(alertButton)", action: askQuestion)
