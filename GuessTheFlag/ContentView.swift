@@ -26,6 +26,9 @@ struct ContentView: View {
     @State private var textMessage = "" // String for the alert message
     @State private var questions = 8 // Varible for keeping track of the number of questions
     @State private var alertButton = "" // String for alert botton
+    @State private var animationAmount = 0.0
+    @State private var flagTapped = -1
+    @State private var enabled = false
     
     func flagTapped(_ number: Int){ // asigning scoreTitle when a flag is tapped and toggle alert
         if(correctAnswer == number){
@@ -59,11 +62,15 @@ struct ContentView: View {
         score = 0
         countries.shuffle()
         correctAnswer = Int.random(in: 0...2)
+        enabled = false
+        flagTapped = -1
     }
     
     func askQuestion(){ // method created for alert action
         countries.shuffle()
         correctAnswer = Int.random(in: 0...2)
+        enabled = false
+        flagTapped = -1
     }
     
     var body: some View {
@@ -90,12 +97,22 @@ struct ContentView: View {
                     ForEach(0..<3){ number in // creating 3 buttons with their index,
                         Button{
                             flagTapped(number) // calling flagTapped with index value to compare it to the correctAnswer
+                            flagTapped = number
+                            enabled = true
+                            withAnimation(){
+                                animationAmount += 360
+                            }
                         }label: {
                             Image(countries[number]) // Image as the label for the buttons
 //                                .renderingMode(.original)
 //                                .clipShape(Capsule())
 //                                .shadow(radius: 5)
                                 .modifier(flagLabel())// created custom modifier for view
+                                .rotation3DEffect(Angle(degrees: flagTapped == number ? animationAmount : 0), axis: (x: 0, y: 1, z: 0))
+                                .opacity(flagTapped != number && enabled == true ? 0.25 : 1)
+                                .scaleEffect(enabled == true && flagTapped == number ? 1.2 : 1)
+                                .animation(.easeInOut(duration: 1), value: enabled)
+                                
                         }
                         .alert(scoreTitle, isPresented: $showingScore){ // alert focus activates when flag is tapped
                             Button("\(alertButton)", action: askQuestion)
