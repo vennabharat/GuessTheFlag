@@ -7,6 +7,15 @@
 
 import SwiftUI
 
+struct flagLabel: ViewModifier{
+    func body(content: Content) -> some View {
+        content
+//            .renderingMode(.original)
+            .clipShape(Capsule())
+            .shadow(radius: 5)
+    }
+}
+
 struct ContentView: View {
     
     @State private var countries = ["Estonia", "France", "Germany", "Ireland", "Italy", "Monaco", "Nigeria", "Poland", "Russia", "Spain", "UK", "US"].shuffled() // Array of Strings representing countries
